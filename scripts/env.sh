@@ -1,0 +1,3 @@
+NUM_MP=1
+NUM_DP=2
+NUM_PP=1
