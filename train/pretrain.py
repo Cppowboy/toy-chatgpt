@@ -43,10 +43,12 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version, send_example_telemetry
 from transformers.utils.versions import require_version
-
+from llama.tokenization_llama import LlamaTokenizer
+from llama.configuration_llama import LlamaConfig
+from llama.modeling_llama import LlamaForCausalLM,LlamaModel
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
-check_min_version("4.29.0.dev0")
+#check_min_version("4.29.0.dev0")
 
 require_version(
     "datasets>=1.8.0",
@@ -406,13 +408,13 @@ def main():
         "use_auth_token": True if model_args.use_auth_token else None,
     }
     if model_args.config_name:
-        config = AutoConfig.from_pretrained(model_args.config_name, **config_kwargs)
+        config = LlamaConfig.from_pretrained(model_args.config_name, **config_kwargs)
     elif model_args.model_name_or_path:
-        config = AutoConfig.from_pretrained(
+        config = LlamaConfig.from_pretrained(
             model_args.model_name_or_path, **config_kwargs
         )
     else:
-        config = AutoConfig()
+        config = LlamaConfig()
         logger.warning("You are instantiating a new config instance from scratch.")
         if model_args.config_overrides is not None:
             logger.info(f"Overriding config: {model_args.config_overrides}")
@@ -426,11 +428,11 @@ def main():
         "use_auth_token": True if model_args.use_auth_token else None,
     }
     if model_args.tokenizer_name:
-        tokenizer = AutoTokenizer.from_pretrained(
+        tokenizer = LlamaTokenizer.from_pretrained(
             model_args.tokenizer_name, **tokenizer_kwargs
         )
     elif model_args.model_name_or_path:
-        tokenizer = AutoTokenizer.from_pretrained(
+        tokenizer = LlamaTokenizer.from_pretrained(
             model_args.model_name_or_path, **tokenizer_kwargs
         )
     else:
@@ -440,7 +442,7 @@ def main():
         )
 
     if model_args.model_name_or_path:
-        model = AutoModelForCausalLM.from_pretrained(
+        model = LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
@@ -451,7 +453,7 @@ def main():
         )
     else:
         logger.info("Training new model from scratch")
-        model = AutoModelForCausalLM(config)
+        model = LlamaForModelCausalLM(config)
 
     # We resize the embeddings only when necessary to avoid index errors. If you are creating a model from scratch
     # on a small vocab and want a smaller embedding size, remove this test.

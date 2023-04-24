@@ -4,3 +4,4 @@ datasets
 trl
 loguru
 fire
+sentencepiece
